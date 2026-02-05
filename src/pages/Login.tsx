@@ -21,13 +21,18 @@ export default function Login() {
     setLoading(true);
     setError("");
 
-    const { error: signInError } = await signIn(email, password);
+    const { error: signInError, role } = await signIn(email, password);
 
     if (signInError) {
       setError(signInError.message);
       setLoading(false);
     } else {
-      navigate("/");
+      // Redirect based on role
+      const redirectPath = role === "admin" ? "/" : 
+                          role === "doctor" ? "/" : 
+                          role === "nurse" ? "/" : 
+                          role === "patient" ? "/" : "/";
+      navigate(redirectPath);
     }
   };
 
