@@ -27,7 +27,7 @@ interface AuthContextType {
   role: AppRole | null;
   loading: boolean;
   signUp: (email: string, password: string, fullName: string, role: AppRole) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; role: AppRole | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -139,13 +139,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        return { error };
+        return { error, role: null };
+      }
+
+      // Fetch role immediately after sign in
+      let userRole: AppRole | null = null;
+      if (data.user) {
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id)
+          .single();
+        
+        if (roleData) {
+          userRole = roleData.role as AppRole;
+          setRole(userRole);
+        }
       }
 
       toast({
@@ -153,9 +168,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "You have successfully signed in.",
       });
 
-      return { error: null };
+      return { error: null, role: userRole };
     } catch (error) {
-      return { error: error as Error };
+      return { error: error as Error, role: null };
     }
   };
 
