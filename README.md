@@ -81,6 +81,25 @@ npm install
 
 # 4. Start the development server
 npm run dev
+
+# 5. Install the tailwindcss
+npm install tailwindcss @tailwindcss/vite
+
+
+Configure the Vite plugin
+Add the @tailwindcss/vite plugin to your Vite configuration.
+
+vite.config.ts
+
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
+
+
 ```
 
 * Hot reload enabled
