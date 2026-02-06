@@ -21,8 +21,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
+import type { AppRole } from "@/types/roles";
 
 const queryClient = new QueryClient();
+
+const allRoles: AppRole[] = ["admin", "doctor", "nurse", "patient", "receptionist", "lab_tech", "pharmacist", "accountant"];
+
+const ProtectedPage = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: AppRole[] }) => (
+  <ProtectedRoute allowedRoles={allowedRoles}>
+    <RoleBasedLayout>{children}</RoleBasedLayout>
+  </ProtectedRoute>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,123 +41,22 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Dashboard />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patients"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse"]}>
-                  <RoleBasedLayout>
-                    <Patients />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/doctors"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Doctors />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/appointments"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Appointments />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/departments"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse"]}>
-                  <RoleBasedLayout>
-                    <Departments />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/emergency"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse"]}>
-                  <RoleBasedLayout>
-                    <Emergency />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/pharmacy"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Pharmacy />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/laboratory"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Laboratory />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/reports"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor"]}>
-                  <RoleBasedLayout>
-                    <Reports />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/billing"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "patient"]}>
-                  <RoleBasedLayout>
-                    <Billing />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "doctor", "nurse", "patient"]}>
-                  <RoleBasedLayout>
-                    <Settings />
-                  </RoleBasedLayout>
-                </ProtectedRoute>
-              }
-            />
-            
+            <Route path="/" element={<ProtectedPage allowedRoles={allRoles}><Dashboard /></ProtectedPage>} />
+            <Route path="/patients" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "receptionist"]}><Patients /></ProtectedPage>} />
+            <Route path="/doctors" element={<ProtectedPage allowedRoles={["admin", "nurse", "patient", "receptionist"]}><Doctors /></ProtectedPage>} />
+            <Route path="/appointments" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "patient", "receptionist"]}><Appointments /></ProtectedPage>} />
+            <Route path="/departments" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse"]}><Departments /></ProtectedPage>} />
+            <Route path="/emergency" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "receptionist"]}><Emergency /></ProtectedPage>} />
+            <Route path="/pharmacy" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "patient", "pharmacist"]}><Pharmacy /></ProtectedPage>} />
+            <Route path="/laboratory" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "patient", "lab_tech"]}><Laboratory /></ProtectedPage>} />
+            <Route path="/reports" element={<ProtectedPage allowedRoles={["admin", "doctor", "accountant"]}><Reports /></ProtectedPage>} />
+            <Route path="/billing" element={<ProtectedPage allowedRoles={["admin", "patient", "accountant", "receptionist"]}><Billing /></ProtectedPage>} />
+            <Route path="/settings" element={<ProtectedPage allowedRoles={allRoles}><Settings /></ProtectedPage>} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

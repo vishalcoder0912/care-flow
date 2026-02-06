@@ -2,8 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-type AppRole = "admin" | "doctor" | "nurse" | "patient";
+import type { AppRole } from "@/types/roles";
 
 interface Profile {
   id: string;
@@ -122,9 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (error) {
-        return { error };
-      }
+      if (error) return { error };
 
       toast({
         title: "Account created!",
@@ -144,11 +141,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       });
 
-      if (error) {
-        return { error, role: null };
-      }
+      if (error) return { error, role: null };
 
-      // Fetch role immediately after sign in
       let userRole: AppRole | null = null;
       if (data.user) {
         const { data: roleData } = await supabase
@@ -156,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .select("role")
           .eq("user_id", data.user.id)
           .single();
-        
+
         if (roleData) {
           userRole = roleData.role as AppRole;
           setRole(userRole);
@@ -188,17 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        session,
-        profile,
-        role,
-        loading,
-        signUp,
-        signIn,
-        signOut,
-        refreshProfile,
-      }}
+      value={{ user, session, profile, role, loading, signUp, signIn, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>

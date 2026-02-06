@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { DemoCredentials } from "@/components/login/DemoCredentials";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -27,13 +28,13 @@ export default function Login() {
       setError(signInError.message);
       setLoading(false);
     } else {
-      // Redirect based on role
-      const redirectPath = role === "admin" ? "/" : 
-                          role === "doctor" ? "/" : 
-                          role === "nurse" ? "/" : 
-                          role === "patient" ? "/" : "/";
-      navigate(redirectPath);
+      navigate("/");
     }
+  };
+
+  const handleDemoSelect = (demoEmail: string, demoPassword: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
   };
 
   return (
@@ -60,8 +61,7 @@ export default function Login() {
               Welcome to the Future of Healthcare Management
             </h2>
             <p className="text-white/80 text-lg max-w-md">
-              Streamline your hospital operations with our comprehensive management system. 
-              Designed for administrators, doctors, nurses, and patients.
+              8 specialized roles. Unique dashboards. Attendance tracking. Complete hospital management.
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function Login() {
               { label: "Active Patients", value: "2,500+" },
               { label: "Medical Staff", value: "150+" },
               { label: "Departments", value: "12" },
-              { label: "Success Rate", value: "99.9%" },
+              { label: "Roles Supported", value: "8" },
             ].map((stat) => (
               <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <p className="text-3xl font-bold text-white">{stat.value}</p>
@@ -81,17 +81,15 @@ export default function Login() {
         </div>
 
         <div className="relative z-10">
-          <p className="text-white/60 text-sm">
-            © 2024 MediCare Hospital Pro. All rights reserved.
-          </p>
+          <p className="text-white/60 text-sm">© 2025 MediCare Hospital Pro. All rights reserved.</p>
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-8 bg-background overflow-y-auto">
+        <div className="w-full max-w-md space-y-6">
           {/* Mobile Logo */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
+          <div className="flex items-center gap-3 lg:hidden">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
               <Activity className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -118,9 +116,7 @@ export default function Login() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address
-                  </Label>
+                  <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
@@ -137,13 +133,8 @@ export default function Login() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-sm font-medium">
-                      Password
-                    </Label>
-                    <Link
-                      to="/forgot-password"
-                      className="text-sm text-primary hover:underline font-medium"
-                    >
+                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                    <Link to="/forgot-password" className="text-sm text-primary hover:underline font-medium">
                       Forgot password?
                     </Link>
                   </div>
@@ -170,11 +161,7 @@ export default function Login() {
               </CardContent>
 
               <CardFooter className="flex flex-col space-y-4 pt-2">
-                <Button
-                  type="submit"
-                  className="w-full h-12 text-base font-semibold"
-                  disabled={loading}
-                >
+                <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={loading}>
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
@@ -190,10 +177,7 @@ export default function Login() {
 
                 <p className="text-center text-sm text-muted-foreground">
                   Don't have an account?{" "}
-                  <Link
-                    to="/register"
-                    className="text-primary hover:underline font-semibold"
-                  >
+                  <Link to="/register" className="text-primary hover:underline font-semibold">
                     Create account
                   </Link>
                 </p>
@@ -201,15 +185,18 @@ export default function Login() {
             </form>
           </Card>
 
-          <p className="text-center text-xs text-muted-foreground mt-8">
+          {/* Demo Credentials */}
+          <Card className="border-dashed border-2 border-primary/20 bg-primary/5">
+            <CardContent className="pt-4 pb-4">
+              <DemoCredentials onSelect={handleDemoSelect} />
+            </CardContent>
+          </Card>
+
+          <p className="text-center text-xs text-muted-foreground">
             By signing in, you agree to our{" "}
-            <Link to="/terms" className="underline hover:text-foreground">
-              Terms of Service
-            </Link>{" "}
+            <Link to="/terms" className="underline hover:text-foreground">Terms of Service</Link>{" "}
             and{" "}
-            <Link to="/privacy" className="underline hover:text-foreground">
-              Privacy Policy
-            </Link>
+            <Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>
           </p>
         </div>
       </div>
