@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance_logs: {
+        Row: {
+          check_in: string
+          check_out: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          total_hours: number | null
+          user_id: string
+        }
+        Insert: {
+          check_in?: string
+          check_out?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          total_hours?: number | null
+          user_id: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          total_hours?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -98,7 +128,15 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "doctor" | "nurse" | "patient"
+      app_role:
+        | "admin"
+        | "doctor"
+        | "nurse"
+        | "patient"
+        | "receptionist"
+        | "lab_tech"
+        | "pharmacist"
+        | "accountant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -226,7 +264,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "doctor", "nurse", "patient"],
+      app_role: [
+        "admin",
+        "doctor",
+        "nurse",
+        "patient",
+        "receptionist",
+        "lab_tech",
+        "pharmacist",
+        "accountant",
+      ],
     },
   },
 } as const

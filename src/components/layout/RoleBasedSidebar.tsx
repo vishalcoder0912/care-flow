@@ -1,28 +1,15 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Users,
-  Stethoscope,
-  Calendar,
-  Bed,
-  AlertCircle,
-  FileText,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  Activity,
-  Pill,
-  FlaskConical,
-  CreditCard,
-  LogOut,
-  User,
+  LayoutDashboard, Users, Stethoscope, Calendar, Bed, AlertCircle,
+  FileText, Settings, ChevronLeft, ChevronRight, Activity, Pill,
+  FlaskConical, CreditCard, LogOut, Phone, Calculator, Package, TestTube,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-type AppRole = "admin" | "doctor" | "nurse" | "patient";
+import { ROLE_CONFIGS } from "@/types/roles";
+import type { AppRole } from "@/types/roles";
 
 interface MenuItem {
   icon: React.ElementType;
@@ -32,58 +19,38 @@ interface MenuItem {
 }
 
 const allMenuItems: MenuItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/", roles: ["admin", "doctor", "nurse", "patient"] },
-  { icon: Users, label: "Patients", path: "/patients", roles: ["admin", "doctor", "nurse"] },
-  { icon: Stethoscope, label: "Doctors", path: "/doctors", roles: ["admin", "nurse", "patient"] },
-  { icon: Calendar, label: "Appointments", path: "/appointments", roles: ["admin", "doctor", "nurse", "patient"] },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/", roles: ["admin", "doctor", "nurse", "patient", "receptionist", "lab_tech", "pharmacist", "accountant"] },
+  { icon: Users, label: "Patients", path: "/patients", roles: ["admin", "doctor", "nurse", "receptionist"] },
+  { icon: Stethoscope, label: "Doctors", path: "/doctors", roles: ["admin", "nurse", "patient", "receptionist"] },
+  { icon: Calendar, label: "Appointments", path: "/appointments", roles: ["admin", "doctor", "nurse", "patient", "receptionist"] },
   { icon: Bed, label: "Departments", path: "/departments", roles: ["admin", "doctor", "nurse"] },
-  { icon: AlertCircle, label: "Emergency", path: "/emergency", roles: ["admin", "doctor", "nurse"] },
-  { icon: Pill, label: "Pharmacy", path: "/pharmacy", roles: ["admin", "doctor", "nurse", "patient"] },
-  { icon: FlaskConical, label: "Laboratory", path: "/laboratory", roles: ["admin", "doctor", "nurse", "patient"] },
-  { icon: FileText, label: "Reports", path: "/reports", roles: ["admin", "doctor"] },
-  { icon: CreditCard, label: "Billing", path: "/billing", roles: ["admin", "patient"] },
+  { icon: AlertCircle, label: "Emergency", path: "/emergency", roles: ["admin", "doctor", "nurse", "receptionist"] },
+  { icon: Pill, label: "Pharmacy", path: "/pharmacy", roles: ["admin", "doctor", "nurse", "patient", "pharmacist"] },
+  { icon: FlaskConical, label: "Laboratory", path: "/laboratory", roles: ["admin", "doctor", "nurse", "patient", "lab_tech"] },
+  { icon: FileText, label: "Reports", path: "/reports", roles: ["admin", "doctor", "accountant"] },
+  { icon: CreditCard, label: "Billing", path: "/billing", roles: ["admin", "patient", "accountant", "receptionist"] },
 ];
 
 const bottomMenuItems: MenuItem[] = [
-  { icon: Settings, label: "Settings", path: "/settings", roles: ["admin", "doctor", "nurse", "patient"] },
+  { icon: Settings, label: "Settings", path: "/settings", roles: ["admin", "doctor", "nurse", "patient", "receptionist", "lab_tech", "pharmacist", "accountant"] },
 ];
 
 export const RoleBasedSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
   const { role, profile, signOut } = useAuth();
 
   const filteredMenuItems = allMenuItems.filter(
     (item) => role && item.roles.includes(role)
   );
-
   const filteredBottomItems = bottomMenuItems.filter(
     (item) => role && item.roles.includes(role)
   );
 
-  const getRoleColor = (userRole: AppRole | null) => {
-    switch (userRole) {
-      case "admin":
-        return "bg-red-500/20 text-red-300";
-      case "doctor":
-        return "bg-blue-500/20 text-blue-300";
-      case "nurse":
-        return "bg-green-500/20 text-green-300";
-      case "patient":
-        return "bg-purple-500/20 text-purple-300";
-      default:
-        return "bg-gray-500/20 text-gray-300";
-    }
-  };
+  const roleConfig = role ? ROLE_CONFIGS[role] : null;
 
   const getInitials = (name: string | null) => {
     if (!name) return "U";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
   return (
@@ -101,9 +68,7 @@ export const RoleBasedSidebar = () => {
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
-              <h1 className="font-display text-xl font-bold text-white tracking-tight">
-                MediCare
-              </h1>
+              <h1 className="font-display text-xl font-bold text-white tracking-tight">MediCare</h1>
               <p className="text-xs font-medium text-primary/90">Hospital Pro</p>
             </div>
           )}
@@ -113,11 +78,7 @@ export const RoleBasedSidebar = () => {
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           className="flex h-10 w-10 items-center justify-center rounded-xl text-sidebar-foreground/70 transition-all hover:bg-sidebar-accent hover:text-white focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          {collapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
-          )}
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
       </div>
 
@@ -135,9 +96,11 @@ export const RoleBasedSidebar = () => {
               <p className="text-sm font-semibold text-white truncate">
                 {profile?.full_name || "User"}
               </p>
-              <span className={cn("text-xs px-2 py-0.5 rounded-full capitalize", getRoleColor(role))}>
-                {role || "Loading..."}
-              </span>
+              {roleConfig && (
+                <span className={cn("text-xs px-2 py-0.5 rounded-full capitalize", roleConfig.bgColor, roleConfig.color)}>
+                  {roleConfig.label}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -163,9 +126,7 @@ export const RoleBasedSidebar = () => {
                 title={collapsed ? item.label : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0 text-white" />
-                {!collapsed && (
-                  <span className="animate-fade-in font-medium text-white">{item.label}</span>
-                )}
+                {!collapsed && <span className="animate-fade-in font-medium text-white">{item.label}</span>}
               </NavLink>
             </li>
           ))}
@@ -189,9 +150,7 @@ export const RoleBasedSidebar = () => {
                 title={collapsed ? item.label : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0 text-white" />
-                {!collapsed && (
-                  <span className="animate-fade-in font-medium text-white">{item.label}</span>
-                )}
+                {!collapsed && <span className="animate-fade-in font-medium text-white">{item.label}</span>}
               </NavLink>
             </li>
           ))}
@@ -205,9 +164,7 @@ export const RoleBasedSidebar = () => {
               title={collapsed ? "Sign Out" : undefined}
             >
               <LogOut className="h-5 w-5 flex-shrink-0 text-white" />
-              {!collapsed && (
-                <span className="animate-fade-in font-medium text-white">Sign Out</span>
-              )}
+              {!collapsed && <span className="animate-fade-in font-medium text-white">Sign Out</span>}
             </button>
           </li>
         </ul>

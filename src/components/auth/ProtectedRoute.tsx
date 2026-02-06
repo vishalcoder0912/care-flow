@@ -1,7 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-
-type AppRole = "admin" | "doctor" | "nurse" | "patient";
+import type { AppRole } from "@/types/roles";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -22,9 +21,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
     return <Navigate to="/unauthorized" replace />;
