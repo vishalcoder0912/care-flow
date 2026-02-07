@@ -16,6 +16,7 @@ import Pharmacy from "./pages/Pharmacy";
 import Laboratory from "./pages/Laboratory";
 import Reports from "./pages/Reports";
 import Billing from "./pages/Billing";
+import Attendance from "./pages/Attendance";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/laboratory" element={<ProtectedPage allowedRoles={["admin", "doctor", "nurse", "patient", "lab_tech"]}><Laboratory /></ProtectedPage>} />
             <Route path="/reports" element={<ProtectedPage allowedRoles={["admin", "doctor", "accountant"]}><Reports /></ProtectedPage>} />
             <Route path="/billing" element={<ProtectedPage allowedRoles={["admin", "patient", "accountant", "receptionist"]}><Billing /></ProtectedPage>} />
+            <Route path="/attendance" element={<ProtectedPage allowedRoles={["admin"]}><Attendance /></ProtectedPage>} />
             <Route path="/settings" element={<ProtectedPage allowedRoles={allRoles}><Settings /></ProtectedPage>} />
 
             <Route path="*" element={<NotFound />} />

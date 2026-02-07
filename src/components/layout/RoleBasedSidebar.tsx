@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, Stethoscope, Calendar, Bed, AlertCircle,
   FileText, Settings, ChevronLeft, ChevronRight, Activity, Pill,
-  FlaskConical, CreditCard, LogOut, Phone, Calculator, Package, TestTube,
+  FlaskConical, CreditCard, LogOut, Phone, Calculator, Package, TestTube, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,6 +29,7 @@ const allMenuItems: MenuItem[] = [
   { icon: FlaskConical, label: "Laboratory", path: "/laboratory", roles: ["admin", "doctor", "nurse", "patient", "lab_tech"] },
   { icon: FileText, label: "Reports", path: "/reports", roles: ["admin", "doctor", "accountant"] },
   { icon: CreditCard, label: "Billing", path: "/billing", roles: ["admin", "patient", "accountant", "receptionist"] },
+  { icon: Clock, label: "Attendance", path: "/attendance", roles: ["admin"] },
 ];
 
 const bottomMenuItems: MenuItem[] = [
