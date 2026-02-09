@@ -1,43 +1,48 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Users,
-  Stethoscope,
-  Calendar,
-  Bed,
-  AlertCircle,
-  FileText,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  Activity,
-  Pill,
-  FlaskConical,
-  CreditCard,
+  LayoutDashboard, Users, Stethoscope, Calendar, Bed, AlertCircle, FileText,
+  Settings, ChevronLeft, ChevronRight, Activity, Pill, FlaskConical, CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import type { Database } from "@/integrations/supabase/types";
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Users, label: "Patients", path: "/patients" },
-  { icon: Stethoscope, label: "Doctors", path: "/doctors" },
-  { icon: Calendar, label: "Appointments", path: "/appointments" },
-  { icon: Bed, label: "Departments", path: "/departments" },
-  { icon: AlertCircle, label: "Emergency", path: "/emergency" },
-  { icon: Pill, label: "Pharmacy", path: "/pharmacy" },
-  { icon: FlaskConical, label: "Laboratory", path: "/laboratory" },
-  { icon: FileText, label: "Reports", path: "/reports" },
-  { icon: CreditCard, label: "Billing", path: "/billing" },
+type AppRole = Database["public"]["Enums"]["app_role"];
+
+interface MenuItem {
+  icon: React.ElementType;
+  label: string;
+  path: string;
+  roles: AppRole[];
+}
+
+const allRoles: AppRole[] = ["admin", "doctor", "nurse", "patient", "receptionist", "lab_tech", "pharmacist", "accountant"];
+
+const menuItems: MenuItem[] = [
+  { icon: LayoutDashboard, label: "Dashboard", path: "/", roles: allRoles },
+  { icon: Users, label: "Patients", path: "/patients", roles: ["admin", "doctor", "nurse", "receptionist"] },
+  { icon: Stethoscope, label: "Doctors", path: "/doctors", roles: ["admin", "receptionist", "nurse"] },
+  { icon: Calendar, label: "Appointments", path: "/appointments", roles: ["admin", "doctor", "nurse", "receptionist", "patient"] },
+  { icon: Bed, label: "Departments", path: "/departments", roles: ["admin", "doctor", "nurse"] },
+  { icon: AlertCircle, label: "Emergency", path: "/emergency", roles: ["admin", "doctor", "nurse"] },
+  { icon: Pill, label: "Pharmacy", path: "/pharmacy", roles: ["admin", "pharmacist", "doctor"] },
+  { icon: FlaskConical, label: "Laboratory", path: "/laboratory", roles: ["admin", "lab_tech", "doctor"] },
+  { icon: FileText, label: "Reports", path: "/reports", roles: ["admin", "doctor", "accountant"] },
+  { icon: CreditCard, label: "Billing", path: "/billing", roles: ["admin", "accountant", "receptionist"] },
 ];
 
-const bottomMenuItems = [
-  { icon: Settings, label: "Settings", path: "/settings" },
+const bottomMenuItems: MenuItem[] = [
+  { icon: Settings, label: "Settings", path: "/settings", roles: allRoles },
 ];
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { role } = useAuth();
+
+  const filteredMenu = menuItems.filter((item) => !role || item.roles.includes(role));
+  const filteredBottom = bottomMenuItems.filter((item) => !role || item.roles.includes(role));
 
   return (
     <aside
@@ -50,13 +55,11 @@ export const Sidebar = () => {
       <div className="flex h-20 items-center justify-between border-b border-sidebar-border px-5">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-            <Activity className="h-6 w-6 text-white" />
+            <Activity className="h-6 w-6 text-primary-foreground" />
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
-              <h1 className="font-display text-xl font-bold text-white tracking-tight">
-                MediCare
-              </h1>
+              <h1 className="font-display text-xl font-bold text-white tracking-tight">MediCare</h1>
               <p className="text-xs font-medium text-primary/90">Hospital Pro</p>
             </div>
           )}
@@ -66,11 +69,7 @@ export const Sidebar = () => {
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           className="flex h-10 w-10 items-center justify-center rounded-xl text-sidebar-foreground/70 transition-all hover:bg-sidebar-accent hover:text-white focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          {collapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
-          )}
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
       </div>
 
@@ -80,7 +79,7 @@ export const Sidebar = () => {
           {!collapsed && "Main Menu"}
         </p>
         <ul className="space-y-1.5">
-          {menuItems.map((item) => (
+          {filteredMenu.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
@@ -94,9 +93,7 @@ export const Sidebar = () => {
                 title={collapsed ? item.label : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0 text-white" />
-                {!collapsed && (
-                  <span className="animate-fade-in font-medium text-white">{item.label}</span>
-                )}
+                {!collapsed && <span className="animate-fade-in font-medium text-white">{item.label}</span>}
               </NavLink>
             </li>
           ))}
@@ -109,7 +106,7 @@ export const Sidebar = () => {
           {!collapsed && "Settings"}
         </p>
         <ul className="space-y-1.5">
-          {bottomMenuItems.map((item) => (
+          {filteredBottom.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
@@ -123,9 +120,7 @@ export const Sidebar = () => {
                 title={collapsed ? item.label : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0 text-white" />
-                {!collapsed && (
-                  <span className="animate-fade-in font-medium text-white">{item.label}</span>
-                )}
+                {!collapsed && <span className="animate-fade-in font-medium text-white">{item.label}</span>}
               </NavLink>
             </li>
           ))}
