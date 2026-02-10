@@ -1,48 +1,18 @@
 import { cn } from "@/lib/utils";
 
 const departments = [
-  {
-    name: "Emergency",
-    totalBeds: 30,
-    occupied: 28,
-    color: "bg-destructive",
-    trend: "+5 today",
-  },
-  {
-    name: "ICU",
-    totalBeds: 20,
-    occupied: 18,
-    color: "bg-warning",
-    trend: "Stable",
-  },
-  {
-    name: "Cardiology",
-    totalBeds: 40,
-    occupied: 32,
-    color: "bg-primary",
-    trend: "-2 today",
-  },
-  {
-    name: "Orthopedics",
-    totalBeds: 35,
-    occupied: 20,
-    color: "bg-info",
-    trend: "+3 today",
-  },
-  {
-    name: "Pediatrics",
-    totalBeds: 25,
-    occupied: 15,
-    color: "bg-success",
-    trend: "Stable",
-  },
-  {
-    name: "Neurology",
-    totalBeds: 30,
-    occupied: 22,
-    color: "bg-accent",
-    trend: "+1 today",
-  },
+  { name: "Casualty (Emergency)", totalBeds: 30, occupied: 0, color: "bg-destructive", trend: "No data" },
+  { name: "ICU / MICU / SICU", totalBeds: 20, occupied: 0, color: "bg-warning", trend: "No data" },
+  { name: "Cardiology", totalBeds: 40, occupied: 0, color: "bg-primary", trend: "No data" },
+  { name: "Orthopaedics", totalBeds: 35, occupied: 0, color: "bg-info", trend: "No data" },
+  { name: "Paediatrics", totalBeds: 25, occupied: 0, color: "bg-success", trend: "No data" },
+  { name: "Obstetrics & Gynaecology", totalBeds: 30, occupied: 0, color: "bg-accent", trend: "No data" },
+  { name: "General Medicine", totalBeds: 50, occupied: 0, color: "bg-primary", trend: "No data" },
+  { name: "General Surgery", totalBeds: 40, occupied: 0, color: "bg-info", trend: "No data" },
+  { name: "ENT", totalBeds: 15, occupied: 0, color: "bg-warning", trend: "No data" },
+  { name: "Ophthalmology", totalBeds: 15, occupied: 0, color: "bg-success", trend: "No data" },
+  { name: "Dermatology", totalBeds: 10, occupied: 0, color: "bg-accent", trend: "No data" },
+  { name: "Ayush / Yoga", totalBeds: 10, occupied: 0, color: "bg-primary", trend: "No data" },
 ];
 
 export const DepartmentOverview = () => {
@@ -53,9 +23,9 @@ export const DepartmentOverview = () => {
         <span className="text-sm text-muted-foreground">Bed Occupancy</span>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-80 overflow-y-auto custom-scrollbar">
         {departments.map((dept) => {
-          const percentage = (dept.occupied / dept.totalBeds) * 100;
+          const percentage = dept.totalBeds > 0 ? (dept.occupied / dept.totalBeds) * 100 : 0;
           const isHigh = percentage > 80;
           
           return (
