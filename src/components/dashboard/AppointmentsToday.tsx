@@ -1,11 +1,13 @@
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
-
-// Empty state — will show real data from database when available
-const appointments: any[] = [];
+import { Calendar, Clock } from "lucide-react";
+import { useAppointments } from "@/hooks/useSupabaseData";
 
 export const AppointmentsToday = () => {
-  if (appointments.length === 0) {
+  const { appointments } = useAppointments();
+  const today = new Date().toISOString().split("T")[0];
+  const todayAppts = appointments.filter((a) => a.appointment_date === today);
+
+  if (todayAppts.length === 0) {
     return (
       <div className="animate-fade-in rounded-xl bg-card p-6 shadow-card" style={{ animationDelay: "400ms" }}>
         <div className="mb-4 flex items-center justify-between">
@@ -25,10 +27,21 @@ export const AppointmentsToday = () => {
     <div className="animate-fade-in rounded-xl bg-card p-6 shadow-card" style={{ animationDelay: "400ms" }}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold">Today's OPD</h3>
-        <Badge variant="outline" className="font-normal">{appointments.length} scheduled</Badge>
+        <Badge variant="outline" className="font-normal">{todayAppts.length} scheduled</Badge>
       </div>
       <div className="space-y-3">
-        {/* appointments will be mapped here when data available */}
+        {todayAppts.slice(0, 5).map((appt) => (
+          <div key={appt.id} className="flex items-center justify-between rounded-lg border border-border p-3">
+            <div>
+              <p className="font-medium text-sm">{appt.patient_name}</p>
+              <p className="text-xs text-muted-foreground">Dr. {appt.doctor_name} • {appt.appointment_type}</p>
+            </div>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>{appt.appointment_time?.slice(0, 5)}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

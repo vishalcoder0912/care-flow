@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_time: string
+          appointment_type: string | null
+          created_at: string
+          created_by: string | null
+          doctor_id: string | null
+          doctor_name: string
+          duration: number | null
+          id: string
+          is_online: boolean | null
+          notes: string | null
+          patient_id: string | null
+          patient_name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_time: string
+          appointment_type?: string | null
+          created_at?: string
+          created_by?: string | null
+          doctor_id?: string | null
+          doctor_name: string
+          duration?: number | null
+          id?: string
+          is_online?: boolean | null
+          notes?: string | null
+          patient_id?: string | null
+          patient_name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_time?: string
+          appointment_type?: string | null
+          created_at?: string
+          created_by?: string | null
+          doctor_id?: string | null
+          doctor_name?: string
+          duration?: number | null
+          id?: string
+          is_online?: boolean | null
+          notes?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_logs: {
         Row: {
           check_in: string
@@ -41,6 +110,357 @@ export type Database = {
           notes?: string | null
           total_hours?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      doctors: {
+        Row: {
+          availability: string | null
+          avatar_url: string | null
+          consultation_fee: number | null
+          created_at: string
+          department: string | null
+          doctor_id: string
+          education: string | null
+          email: string | null
+          experience: string | null
+          full_name: string
+          id: string
+          license_number: string | null
+          next_slot: string | null
+          patients_count: number | null
+          phone: string | null
+          rating: number | null
+          specialization: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          availability?: string | null
+          avatar_url?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          department?: string | null
+          doctor_id: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          full_name: string
+          id?: string
+          license_number?: string | null
+          next_slot?: string | null
+          patients_count?: number | null
+          phone?: string | null
+          rating?: number | null
+          specialization?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          availability?: string | null
+          avatar_url?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          department?: string | null
+          doctor_id?: string
+          education?: string | null
+          email?: string | null
+          experience?: string | null
+          full_name?: string
+          id?: string
+          license_number?: string | null
+          next_slot?: string | null
+          patients_count?: number | null
+          phone?: string | null
+          rating?: number | null
+          specialization?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      emergency_cases: {
+        Row: {
+          age: number | null
+          arrival_time: string | null
+          assigned_to: string | null
+          bp: string | null
+          condition: string | null
+          created_at: string
+          gender: string | null
+          hr: number | null
+          id: string
+          patient_name: string
+          priority: string | null
+          spo2: number | null
+          status: string | null
+          symptoms: string[] | null
+          triage: string | null
+          updated_at: string
+          wait_time: string | null
+        }
+        Insert: {
+          age?: number | null
+          arrival_time?: string | null
+          assigned_to?: string | null
+          bp?: string | null
+          condition?: string | null
+          created_at?: string
+          gender?: string | null
+          hr?: number | null
+          id?: string
+          patient_name: string
+          priority?: string | null
+          spo2?: number | null
+          status?: string | null
+          symptoms?: string[] | null
+          triage?: string | null
+          updated_at?: string
+          wait_time?: string | null
+        }
+        Update: {
+          age?: number | null
+          arrival_time?: string | null
+          assigned_to?: string | null
+          bp?: string | null
+          condition?: string | null
+          created_at?: string
+          gender?: string | null
+          hr?: number | null
+          id?: string
+          patient_name?: string
+          priority?: string | null
+          spo2?: number | null
+          status?: string | null
+          symptoms?: string[] | null
+          triage?: string | null
+          updated_at?: string
+          wait_time?: string | null
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          due_date: string | null
+          id: string
+          invoice_date: string
+          invoice_id: string
+          items: Json | null
+          paid: number | null
+          patient_id_ref: string | null
+          patient_name: string
+          payment_method: string | null
+          status: string | null
+          subtotal: number | null
+          tax: number | null
+          total: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_date?: string
+          invoice_id: string
+          items?: Json | null
+          paid?: number | null
+          patient_id_ref?: string | null
+          patient_name: string
+          payment_method?: string | null
+          status?: string | null
+          subtotal?: number | null
+          tax?: number | null
+          total?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_date?: string
+          invoice_id?: string
+          items?: Json | null
+          paid?: number | null
+          patient_id_ref?: string | null
+          patient_name?: string
+          payment_method?: string | null
+          status?: string | null
+          subtotal?: number | null
+          tax?: number | null
+          total?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lab_tests: {
+        Row: {
+          category: string | null
+          completed_date: string | null
+          created_at: string
+          id: string
+          patient_id_ref: string | null
+          patient_name: string
+          priority: string | null
+          request_date: string
+          requested_by: string | null
+          result: string | null
+          sample_collected: boolean | null
+          status: string | null
+          test_id: string
+          test_type: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          patient_id_ref?: string | null
+          patient_name: string
+          priority?: string | null
+          request_date?: string
+          requested_by?: string | null
+          result?: string | null
+          sample_collected?: boolean | null
+          status?: string | null
+          test_id: string
+          test_type: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          patient_id_ref?: string | null
+          patient_name?: string
+          priority?: string | null
+          request_date?: string
+          requested_by?: string | null
+          result?: string | null
+          sample_collected?: boolean | null
+          status?: string | null
+          test_id?: string
+          test_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      medicines: {
+        Row: {
+          batch_number: string | null
+          category: string | null
+          created_at: string
+          expiry_date: string | null
+          generic_name: string | null
+          id: string
+          manufacturer: string | null
+          medicine_id: string
+          name: string
+          quantity: number | null
+          reorder_level: number | null
+          status: string | null
+          unit_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          batch_number?: string | null
+          category?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          generic_name?: string | null
+          id?: string
+          manufacturer?: string | null
+          medicine_id: string
+          name: string
+          quantity?: number | null
+          reorder_level?: number | null
+          status?: string | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          batch_number?: string | null
+          category?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          generic_name?: string | null
+          id?: string
+          manufacturer?: string | null
+          medicine_id?: string
+          name?: string
+          quantity?: number | null
+          reorder_level?: number | null
+          status?: string | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          aadhaar_number: string | null
+          abha_id: string | null
+          address: string | null
+          age: number
+          avatar_url: string | null
+          blood_type: string | null
+          created_at: string
+          created_by: string
+          department: string | null
+          email: string | null
+          emergency_contact: string | null
+          full_name: string
+          gender: string
+          id: string
+          patient_id: string
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          aadhaar_number?: string | null
+          abha_id?: string | null
+          address?: string | null
+          age: number
+          avatar_url?: string | null
+          blood_type?: string | null
+          created_at?: string
+          created_by: string
+          department?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          full_name: string
+          gender: string
+          id?: string
+          patient_id: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          aadhaar_number?: string | null
+          abha_id?: string | null
+          address?: string | null
+          age?: number
+          avatar_url?: string | null
+          blood_type?: string | null
+          created_at?: string
+          created_by?: string
+          department?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          full_name?: string
+          gender?: string
+          id?: string
+          patient_id?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }

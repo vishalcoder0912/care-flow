@@ -2,27 +2,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Eye, Users } from "lucide-react";
+import { usePatients } from "@/hooks/useSupabaseData";
 
-// Empty state — will show real data from database when available
-const patients: any[] = [];
-
-const getStatusStyles = (type: string) => {
-  switch (type) {
-    case "success":
-      return "bg-success/10 text-success border-success/20";
-    case "warning":
-      return "bg-warning/10 text-warning border-warning/20";
-    case "danger":
-      return "bg-destructive/10 text-destructive border-destructive/20";
-    case "info":
-      return "bg-info/10 text-info border-info/20";
-    default:
-      return "bg-muted text-muted-foreground";
+const getStatusStyles = (status: string) => {
+  switch (status) {
+    case "Discharged": return "bg-success/10 text-success border-success/20";
+    case "In Treatment": return "bg-warning/10 text-warning border-warning/20";
+    case "Critical": return "bg-destructive/10 text-destructive border-destructive/20";
+    case "Stable": return "bg-info/10 text-info border-info/20";
+    default: return "bg-muted text-muted-foreground";
   }
 };
 
 export const RecentPatients = () => {
-  if (patients.length === 0) {
+  const { patients, loading } = usePatients();
+  const recent = patients.slice(0, 5);
+
+  if (recent.length === 0) {
     return (
       <div className="animate-fade-in rounded-xl bg-card shadow-card" style={{ animationDelay: "300ms" }}>
         <div className="flex items-center justify-between border-b border-border p-4">
@@ -42,7 +38,7 @@ export const RecentPatients = () => {
     <div className="animate-fade-in rounded-xl bg-card shadow-card" style={{ animationDelay: "300ms" }}>
       <div className="flex items-center justify-between border-b border-border p-4">
         <h3 className="font-display text-lg font-semibold">Recent Patients</h3>
-        <Button variant="ghost" size="sm">View All</Button>
+        <Badge variant="outline" className="font-normal">{patients.length} patients</Badge>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -51,35 +47,30 @@ export const RecentPatients = () => {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Patient</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Department</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Admitted</th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Registered</th>
             </tr>
           </thead>
           <tbody>
-            {patients.map((patient: any) => (
+            {recent.map((patient) => (
               <tr key={patient.id} className="border-b border-border/50 transition-colors hover:bg-muted/30">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={patient.avatar} />
-                      <AvatarFallback>{patient.name?.split(" ").map((n: string) => n[0]).join("")}</AvatarFallback>
+                      <AvatarImage src={patient.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${patient.full_name}`} />
+                      <AvatarFallback>{patient.full_name.split(" ").map((n) => n[0]).join("")}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{patient.name}</p>
+                      <p className="font-medium">{patient.full_name}</p>
                       <p className="text-xs text-muted-foreground">{patient.age} yrs, {patient.gender}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">{patient.department}</td>
+                <td className="px-4 py-3 text-sm">{patient.department || "—"}</td>
                 <td className="px-4 py-3">
-                  <Badge variant="outline" className={getStatusStyles(patient.statusType)}>{patient.status}</Badge>
+                  <Badge variant="outline" className={getStatusStyles(patient.status)}>{patient.status}</Badge>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">{patient.admittedDate}</td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><Eye className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
-                  </div>
+                <td className="px-4 py-3 text-sm text-muted-foreground">
+                  {new Date(patient.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
                 </td>
               </tr>
             ))}
