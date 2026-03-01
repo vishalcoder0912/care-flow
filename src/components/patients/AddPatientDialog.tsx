@@ -43,6 +43,8 @@ const patientSchema = z.object({
   status: z.enum(["Stable", "In Treatment", "Critical", "Discharged"]),
   address: z.string().max(500).optional(),
   emergencyContact: z.string().max(100).optional(),
+  aadhaarNumber: z.string().max(12, "Aadhaar must be 12 digits").optional(),
+  abhaId: z.string().max(20, "ABHA ID must be valid").optional(),
 });
 
 type PatientFormData = z.infer<typeof patientSchema>;
@@ -74,6 +76,8 @@ export function AddPatientDialog({ onAdd, open: controlledOpen, onOpenChange, tr
       status: "Stable",
       address: "",
       emergencyContact: "",
+      aadhaarNumber: "",
+      abhaId: "",
     },
   });
 
@@ -291,6 +295,34 @@ export function AddPatientDialog({ onAdd, open: controlledOpen, onOpenChange, tr
                     <FormLabel>Emergency Contact</FormLabel>
                     <FormControl>
                       <Input placeholder="Contact name & number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="aadhaarNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Aadhaar Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1234 5678 9012" maxLength={12} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="abhaId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ABHA Health ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="XX-XXXX-XXXX-XXXX" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

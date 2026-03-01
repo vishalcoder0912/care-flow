@@ -1,23 +1,24 @@
 import {
-  Users, Calendar, UserPlus, Clock, IndianRupee, Phone,
+  Users, Calendar, UserPlus, Clock, IndianRupee,
 } from "lucide-react";
 import { StatCard } from "./StatCard";
+import { useDashboardStats } from "@/hooks/useSupabaseData";
 
 const ReceptionistDashboard = () => {
+  const { stats } = useDashboardStats();
+
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
         <h1 className="font-display text-2xl font-bold md:text-3xl">Reception Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
-          OPD registrations, appointment queue & patient check-ins.
-        </p>
+        <p className="mt-1 text-muted-foreground">OPD registrations, appointment queue & patient check-ins.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Today's Registrations" value="0" change="No registrations" changeType="neutral" icon={UserPlus} iconColor="text-primary" iconBgColor="bg-primary/10" delay={0} />
-        <StatCard title="OPD Queue" value="0" change="No patients waiting" changeType="neutral" icon={Clock} iconColor="text-warning" iconBgColor="bg-warning/10" delay={50} />
-        <StatCard title="Appointments Today" value="0" change="No appointments" changeType="neutral" icon={Calendar} iconColor="text-info" iconBgColor="bg-info/10" delay={100} />
-        <StatCard title="Today's Collection" value="₹0" change="No payments collected" changeType="neutral" icon={IndianRupee} iconColor="text-success" iconBgColor="bg-success/10" delay={150} />
+        <StatCard title="Total Patients" value={String(stats.totalPatients)} change={stats.totalPatients > 0 ? `${stats.totalPatients} registered` : "No registrations"} changeType={stats.totalPatients > 0 ? "positive" : "neutral"} icon={UserPlus} iconColor="text-primary" iconBgColor="bg-primary/10" delay={0} />
+        <StatCard title="Emergency Cases" value={String(stats.emergencyCases)} change={stats.emergencyCases > 0 ? "Active cases" : "No cases"} changeType={stats.emergencyCases > 0 ? "negative" : "neutral"} icon={Clock} iconColor="text-warning" iconBgColor="bg-warning/10" delay={50} />
+        <StatCard title="Today's OPD" value={String(stats.todayAppointments)} change={stats.todayAppointments > 0 ? `${stats.todayAppointments} appointments` : "No appointments"} changeType={stats.todayAppointments > 0 ? "positive" : "neutral"} icon={Calendar} iconColor="text-info" iconBgColor="bg-info/10" delay={100} />
+        <StatCard title="Today's Revenue" value={`₹${stats.todayRevenue.toLocaleString("en-IN")}`} change={stats.todayRevenue > 0 ? "Collected" : "No payments"} changeType={stats.todayRevenue > 0 ? "positive" : "neutral"} icon={IndianRupee} iconColor="text-success" iconBgColor="bg-success/10" delay={150} />
       </div>
 
       <div className="animate-fade-in rounded-xl bg-card p-6 shadow-card" style={{ animationDelay: "200ms" }}>

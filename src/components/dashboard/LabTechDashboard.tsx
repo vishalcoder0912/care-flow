@@ -2,22 +2,23 @@ import {
   FlaskConical, ClipboardList, Clock, CheckCircle,
 } from "lucide-react";
 import { StatCard } from "./StatCard";
+import { useDashboardStats } from "@/hooks/useSupabaseData";
 
 const LabTechDashboard = () => {
+  const { stats } = useDashboardStats();
+
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
         <h1 className="font-display text-2xl font-bold md:text-3xl">Laboratory Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
-          Pending tests, sample collection & report status.
-        </p>
+        <p className="mt-1 text-muted-foreground">Pending tests, sample collection & report status.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Pending Tests" value="0" change="No pending tests" changeType="neutral" icon={FlaskConical} iconColor="text-warning" iconBgColor="bg-warning/10" delay={0} />
-        <StatCard title="Samples Collected" value="0" change="No samples today" changeType="neutral" icon={ClipboardList} iconColor="text-info" iconBgColor="bg-info/10" delay={50} />
-        <StatCard title="Reports Pending" value="0" change="No reports due" changeType="neutral" icon={Clock} iconColor="text-destructive" iconBgColor="bg-destructive/10" delay={100} />
-        <StatCard title="Completed Today" value="0" change="No tests completed" changeType="neutral" icon={CheckCircle} iconColor="text-success" iconBgColor="bg-success/10" delay={150} />
+        <StatCard title="Pending Tests" value={String(stats.pendingLabTests)} change={stats.pendingLabTests > 0 ? `${stats.pendingLabTests} pending` : "All clear"} changeType={stats.pendingLabTests > 0 ? "negative" : "neutral"} icon={FlaskConical} iconColor="text-warning" iconBgColor="bg-warning/10" delay={0} />
+        <StatCard title="Total Patients" value={String(stats.totalPatients)} change="Registered" changeType="neutral" icon={ClipboardList} iconColor="text-info" iconBgColor="bg-info/10" delay={50} />
+        <StatCard title="Emergency Cases" value={String(stats.emergencyCases)} change={stats.emergencyCases > 0 ? "Active" : "None"} changeType={stats.emergencyCases > 0 ? "negative" : "neutral"} icon={Clock} iconColor="text-destructive" iconBgColor="bg-destructive/10" delay={100} />
+        <StatCard title="Completed Tests" value={String(stats.completedLabTests)} change={stats.completedLabTests > 0 ? "Reports ready" : "No tests completed"} changeType={stats.completedLabTests > 0 ? "positive" : "neutral"} icon={CheckCircle} iconColor="text-success" iconBgColor="bg-success/10" delay={150} />
       </div>
 
       <div className="animate-fade-in rounded-xl bg-card p-6 shadow-card" style={{ animationDelay: "200ms" }}>
