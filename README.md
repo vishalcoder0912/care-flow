@@ -1,7 +1,5 @@
 # 🏥 CareFlow AI – Landing Page
-
 A high-performance, modern landing page for **CareFlow AI**, an AI-driven platform focused on improving healthcare workflows, patient coordination, and operational efficiency. This project is built for speed, clarity, and scalability, with seamless editing via **Lovable** and local development support.
-
 ---
 
 ## 🚀 Project Overview
